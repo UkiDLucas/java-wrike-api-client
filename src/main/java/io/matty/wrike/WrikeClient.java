@@ -67,11 +67,11 @@ public class WrikeClient implements Serializable {
         return this.oAuthClient;
     }
 
-    public OAuthResourceResponse makeRequest(String token, String uri, String method) throws OAuthSystemException, OAuthProblemException {
+    public OAuthResourceResponse makeRequest(String token, String uri, String requestMethod) throws OAuthSystemException, OAuthProblemException {
         OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(uri)
                 .setAccessToken(token).buildQueryMessage();
 
-        OAuthResourceResponse resourceResponse = getOAuthClient().resource(bearerClientRequest, method, OAuthResourceResponse.class);
+        OAuthResourceResponse resourceResponse = getOAuthClient().resource(bearerClientRequest, requestMethod, OAuthResourceResponse.class);
         return resourceResponse;
     }
 
@@ -107,8 +107,13 @@ public class WrikeClient implements Serializable {
         return false;
     }
 
+    /**
+     * Building & returns OAuthClientRequest from WrikeCfg.java
+     **/
     public String getWrikeAuthenticationUri() {
         try {
+            System.out.println("Building OAuthClientRequest from WrikeCfg.java");
+
             OAuthClientRequest request = OAuthClientRequest
                     .authorizationLocation("https://www.wrike.com/oauth2/authorize")
                     .setClientId(WrikeCfg.clientID)
@@ -156,7 +161,7 @@ public class WrikeClient implements Serializable {
         Object wrikeClientObj = request.getSession().getAttribute("WRIKE_CLIENT");
 
         if (wrikeClientObj instanceof WrikeClient) {
-            return (WrikeClient)wrikeClientObj;
+            return (WrikeClient) wrikeClientObj;
         }
 
         WrikeClient wrikeClient = new WrikeClient();
